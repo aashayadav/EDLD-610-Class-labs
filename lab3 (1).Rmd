@@ -1,0 +1,122 @@
+---
+title: "Lab 3"
+author: "Asha Yadav"
+date: "October 16, 2019"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      message = FALSE,
+                      warning = FALSE)
+```
+
+1. Run the following code to load the *tidyverse*.
+
+```{r load-tidyverse}
+library(tidyverse)
+```
+
+1. Run the following lines of code to view and read about the data we'll use 
+for this lab.
+
+```{r gsscat, eval = FALSE}
+str(gss_cat)
+View(gss_cat)
+?gss_cat
+```
+
+2. Use `ggplot` to create a histogram of `tvhours`. The plot should:
+  + Include a small amount of transparency so gridlines are visible under the 
+    histogram.
+  + Be a different color than the default
+  + Include meaningful axis labels
+  + Have a title and a subtitle
+
+```{r question-2}
+ggplot(gss_cat, aes(x = tvhours)) + 
+  geom_histogram(alpha = 0.7, color = "red", fill = "cornflowerblue") + labs(x = "TV Hours per day", y = "Observations", title = "TV Hours per day", subtitle = "This is a subtitle")
+```
+
+3. Create a ridgeline density plot of `age` by `partyid`. Do you notice any strong
+  differences by party affiliation?
+
+```{r question-3}
+library(ggridges)
+ggplot(gss_cat, aes( age, partyid)) + geom_density_ridges(alpha = 0.7, color = "red", fill = "cornflowerblue")
+# Strong democrat seem to have strong affiliation with high variability around the mean age of 50.
+```
+
+4. Modify the plot from Question 3 to produce separate ridgeline densities by `race`. Do 
+  you see any patterns?
+
+```{r question-4}
+ggplot(gss_cat, aes( age, partyid)) + geom_density_ridges(aes(fill = factor(race), alpha = 0.7))
+# Do not see any pattern.
+
+```
+
+5. Replicate the plots from Questions 3 and 4, but this time displaying the 
+  relations with boxplots (i.e., one boxplot from Question 3 and 
+  one boxplot for Question 4 in the chunk below). Which do you think displays the relation more 
+  clearly? Why?
+  Ans: Boxplot for Question 4 is better with more information and clear presentation. It shows outliers and race as well.
+  
+```{r label, options}
+ggplot(gss_cat, aes(partyid, age)) + geom_boxplot(alpha = 0.7, color = "red", fill = "cornflowerblue") +  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+```{r}
+ggplot(gss_cat, aes(partyid, age)) + geom_boxplot(aes(fill = factor(race), alpha = 0.7)) +  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
+6. Run the following lines of code to get a correlation table as a data frame.
+
+```{r corr-mat-df}
+# You might need to install the ISLR package using the line below. 
+# If so, uncomment out the line, install the pacakge, then comment the line again. 
+# Your document won't knit if you do not comment the line below.
+
+#install.packages(ISLR) 
+#library(ISLR)
+cor_tbl <- Hitters %>% 
+  select_if(is.numeric) %>% 
+  cor(use = "pairwise.complete.obs") %>% 
+  as.data.frame() %>% 
+  mutate(row = row.names(.)) %>% 
+  gather(col, cor, -row) %>% 
+  tbl_df()
+```
+
+Use the correlation table to create a heatmap using `geom_tile`. Change the 
+colors to one of the four viridis palettes. What does the heatmap help you see?
+
+```{r, heatmap}
+ggplot(cor_tbl, aes(row, col, fill = cor)) + geom_tile() + scale_fill_viridis_c() + 
+   theme(axis.text.x = element_text(angle = 60, hjust = 1))
+# Lowest to highest correlation
+```
+
+7. The code below will produce a barplot. 
+
+```{r barplot1}
+ggplot(gss_cat, aes(rincome)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+Use the code below to create a new data set - `gss_cat_new` - that redefines the `rincome` variable so 
+that *Not applicable* is displayed first, followed by *No answer*, *Don't know*, *Refused*, 
+and then each income category from lowest to highest. Once you've redefined the factor
+variable, re-produce the plot above by running the `ggplot` code at the bottom of the chunk. 
+The plot should have *Not applicable* closest to the y-axis, then *No answer*, *Don't know*, etc.
+
+```{r redfine-factor, echo = FALSE}
+gss_cat_new <- gss_cat %>% 
+  mutate(rincome = factor(rincome, levels = c("Not applicable", "No answer", "Don't know", "Regused", "Lr$1000", "$1000 to 2999", "$3000 t 3999", "$4000 to 4999", "$5000 to 5999", "$6000 to 6999", "$7000 to 7999", "$8000 to 9999", "$10000-14999", "$15000-19999", "$20000-24999", "$25000 or more")))
+
+ggplot(gss_cat_new, aes(rincome)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```

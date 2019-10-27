@@ -1,0 +1,102 @@
+---
+title: "Lab 4"
+author: "Asha Yadav"
+date: "October 16, 2019"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+ knitr::opts_chunk$set(message = FALSE, 
+                       warning = FALSE)
+```
+
+
+Install and load the package *Lahman*, which will give you access to the dataset *Teams*
+
+```{r teams_echo, echo = TRUE}
+#install.packages("Lahman")
+library(Lahman)
+library(tidyverse)
+library(janitor)
+Teams
+```
+* Produce a subset of the data (as a new object) that has the following characteristics:
+    + Only one team (your choice)
+    + data from 1980 to present (or as present as the dataset gets)
+    + Includes 5 columns: name, yearID, W, L, R, RA
+
+(The variables above correspond to the team name, the year, wins, losses, runs scored, and runs allowed)
+
+* Make sure you select a team that is currently still around, or it probably
+won't be interesting (see a list of current at [http://www.espn.com/mlb/teams](http://www.espn.com/mlb/teams)).
+
+* Create a new variable corresponding to the winning percentage for the team 
+  you chose over time
+
+$$w_{pct} = \frac{wins}{wins + losses}$$
+
+* Order by winning percentage: Least to greatest
+* Order by winning percentage: greatest to least
+* Compute the mean and standard deviation of winning percentage
+* With the full dataset
+  + compute the average and standard deviation of winning percentage for each team. 
+  + Order by highest winning percentage
+* Use the full data to reproduce the plot below
+
+```{r answers}
+subset_team <- Teams%>%
+  select(name, yearID, W, L, R, RA)%>%
+  filter(name == "Chicago Cubs" & yearID > "1980")%>%
+  mutate(w_pct = W/(W+L))%>%
+  arrange(w_pct)%>%
+  arrange(desc(w_pct))%>%
+  summarize(mean(w_pct), sd(w_pct))
+
+Teams%>%
+  select(name, yearID, W, L, R, RA)%>%
+  mutate(w_pct = W/(W+L))%>%
+  arrange(desc(w_pct))
+
+  
+  
+
+
+```
+
+
+```{r plot}
+# Please put the code for the plot in this chunk.
+Plot_subset <- Teams%>%
+  select(name, yearID, W, L, R, RA)%>%
+  filter(name %in% c("Detroit Tigers", "New York Yankees", "San Diego Padres"))%>%
+  filter(yearID >= "1900") %>%
+  mutate(w_pct = W/(W+L))%>%
+  rename(Team = "name")%>%
+  rename(year_id = "yearID")%>%
+  arrange(year_id)
+
+ggplot(Plot_subset, (aes(year_id, w_pct))) +
+  geom_line(aes(color = Team))
+  
+  
+
+  
+  
+  
+  
+  
+
+
+
+```
+
+
+
+
+
+
+
+

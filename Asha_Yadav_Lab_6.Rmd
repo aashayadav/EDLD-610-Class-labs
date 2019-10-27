@@ -1,0 +1,63 @@
+---
+title: "EDLD 610- Lab 6 (R Markdown)"
+author: "Asha Yadav"
+date: "10/25/2019"
+output:
+  html_document: 
+    highlight: tango
+  ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      fig.width = 6.5, 
+                      fig.height = 4, 
+                      message = FALSE,
+                      warning = FALSE,
+                      eval = TRUE) 
+```
+
+
+```{r import}
+library(tidyverse)
+library(ggplot2)
+
+```
+
+```{r plot ecls-k_samp.sav, echo=FALSE}
+library(rio)
+library(here)
+library(dplyr)
+library(foreign)
+
+eclsk <- read.spss("C:/Users/asha/Dropbox/PhD Sep 2018-/PHD/PHD COURSES/Second-year PhD/FAll/Data Science/Assignments/Project/data/ecls-k_samp.sav", to.data.frame = TRUE)
+eclsk <- eclsk%>%
+  select(T1MSCALE, T2MSCALE, school_type, ethnic)%>%
+  filter(ethnic %in% c("BLACK OR AFRICAN AMERICAN, NON-HISPANIC", "HISPANIC, RACE NOT SPECIFIED", "HISPANIC, RACE SPECIFIED", "WHITE, NON-HISPANIC"))
+  
+ggplot(eclsk, aes(x = T1MSCALE, y = T2MSCALE)) + 
+  geom_point() + geom_smooth(method = lm, aes(fill = school_type)) + facet_wrap(~ ethnic) + 
+  xlab("t1mscale") + ylab("t2mscale")
+
+  
+```
+```{r , timescale}
+t1mean <- mean(eclsk$T1MSCALE, na.rm = TRUE)
+t1sd <- sd(eclsk$T1MSCALE, na.rm = TRUE)
+t2mean <- mean(eclsk$T2MSCALE, na.rm = TRUE)
+t2sd <- sd(eclsk$T2MSCALE, na.rm = TRUE)
+average_gain <- t2mean - t1mean
+
+```
+Mean for t1mscale is `r 20.454` and mean for t2mscale is `r 28.464`.
+Standard deviation for t1mscale is `r 7.296` and standard deviation for t2mscale is `r 8.706`.
+Average gain calculated was `r 8.010`.
+
+How to load data
+
+To analyse any data, you will have to load it in R. In your research work, most of the time data would be collected and saved in differnt formats and files which you will have to load in R in order to carry out the analysis. The two most important packages you would need are {rio} and {here}. R markdown are fully reproducible and suport several output formats like html, pdf and word. Reproducibility is important in order to share your work in right formate with differnt kinds of audiences. For e.g. R Markdown lets you reproduce your report to share with colleagues who are interested in seeing the code and conclusion and also able to work on it in a team. You can produce a report for decision makers who might be interested only in the outcome or conclusion of your study but not the code.  
+
+
+
+
+
+

@@ -1,0 +1,93 @@
+---
+title: "Lab 1"
+author: "Asha Yadav"
+date: "October 7, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(error = TRUE)
+```
+
+# Loading a library
+Run the code chunk below to load the tidyverse. If you get errors, you probably 
+don't have it installed yet, so run `install.packages("tidyverse")` first.
+
+```{r load-tidyverse, message = FALSE, warning = FALSE}
+library(tidyverse)
+```
+
+Note that you should get some messages printed out below that state all the 
+packages that have been loaded. This is important to pay attention to. It says
+that both *ggplot2* and *dplyr* have been loaded, so you don't need explicit 
+calls to those packages 
+
+Many packages also include data. We'll focus here on the *mpg* dataset, which
+comes from *ggplot2*. Run the following code to produce a scatterplot 
+
+```{r first-plot, options}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point()
+```
+
+Look at the help documentation for `geom_point`. Note you'll have to run the 
+code to access the help documentation within a code chunk, rather than in the
+text areas. Try changing the color of the points to "gray70". 
+```{r geom_point}
+help("geom_point")
+```
+```{r gray 70}
+ggplot(mpg, aes(x = displ, y = hwy)) + geom_point(color="gray 70")
+```
+
+
+In the code chunk below create a second scatterplot with the *mpg* dataset, this time with the number of cylinders displayed on the x-axis and the city miles per gallon on the y-axis. Also change the color of the points to "gray70".
+
+```{r second-plot}
+ggplot(mpg, aes(x = cyl, y = cty)) + geom_point(color="gray 70")
+```
+
+The *diamonds* dataset is also included with *ggplot2*. The code below will
+show the first six rows of the dataset.
+
+```{r head-diamonds}
+head(diamonds)
+```
+
+Look at the help documentation and then use the code below to change the 
+number of rows shown to 15.
+
+```{r head-diamonds15}
+help("head")
+head(diamonds, n=15 )
+```
+
+Call a similar function that shows the last six rows of the dataset. (Note you may need to look at the same help documentation.)
+
+```{r last-rows}
+tail(diamonds)
+```
+
+Use any function you want to determine the dimensions of the dataset - i.e., the number of rows and columns.
+
+```{r diamonds-dimensions}
+dim(diamonds)
+```
+
+Use the pipe operator, `%>%`, along with `count`, to count the rows of each diamond color. 
+
+```{r diamond-colors1}
+diamonds %>%
+  count(color) %>%
+  head(15)
+```
+
+Write the code again, this time without the pipe operator
+
+```{r diamond-colors2}
+head(count(diamonds, color), 15)
+```
+
+Be sure to add your name to the top of the document (line 3, in the YAML).
+
+Click the Knit button near the top (with the cute little ball of yarn next to it), and turn in the output (html file) to Canvas. 
